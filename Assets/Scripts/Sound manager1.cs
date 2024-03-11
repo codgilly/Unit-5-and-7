@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class Soundmanager : MonoBehaviour
 {
+    [SerializeField] private AudioMixer myMixer;
     [SerializeField] Slider volumeSlider;
+    [SerializeField] Slider SFXSlider;
     private bool muted = false;
 
-    AudioSource audioSource;
-    public AudioClip ButtonPress;
-    public AudioClip Song;
+
 
     private void Awake()
     {
@@ -20,31 +21,30 @@ public class Soundmanager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(!PlayerPrefs.HasKey("musicVolume"))
+        if (PlayerPrefs.HasKey("volumeSlider"))
         {
-            PlayerPrefs.SetFloat("musicVolume", 1);
             load();
         }
         else
         {
-            load();
+            SetMusicVolume();
+            SetSFXVolume();
         }
-
-        if (!PlayerPrefs.HasKey("muted"))
-        {
-            PlayerPrefs.SetInt("muted", 0);
-            load();
-        }
-
-        else
-        {
-            load();
-        }
-
-
-        audioSource = GetComponent<AudioSource>();
-        print("audio source=" + audioSource);
     }
+    public void SetMusicVolume()
+    {
+        float volume = volumeSlider.value;
+        myMixer.SetFloat("music", Mathf.Log10(volume) * 20);
+        PlayerPrefs.SetFloat("volumeSlider", volume);
+    }
+
+    public void SetSFXVolume()
+    {
+        float volume = SFXSlider.value;
+        myMixer.SetFloat("SFX", Mathf.Log10(volume) * 20);
+        PlayerPrefs.SetFloat("SFXSVolume", volume);
+    }
+
     public void OnButtonPress()
     {
         if (muted == false)
@@ -61,26 +61,19 @@ public class Soundmanager : MonoBehaviour
 
         save();
     }
-    public void ChangeVolume()
-    {
-        AudioListener.volume = volumeSlider.value;
-        save();
-    }
-    
-    public void ButtonSoundEF()
-    {
-        audioSource.PlayOneShot(ButtonPress);
-    }
+
+
     
     private void load()
     {
-        volumeSlider.value = PlayerPrefs.GetFloat("musicVolume");
+        volumeSlider.value = PlayerPrefs.GetFloat("volumeSlider");
+        SFXSlider.value = PlayerPrefs.GetFloat("SFXSVolume");
         muted = PlayerPrefs.GetInt("muted") == 1;
     }
 
     private void save()
     {
-        PlayerPrefs.SetFloat("musicVolume", volumeSlider.value);
+
         PlayerPrefs.SetInt("muted", muted ? 1 : 0);
     }
 }
