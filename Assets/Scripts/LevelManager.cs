@@ -27,4 +27,3 @@ public class SaveDropdownValue : MonoBehaviour
         _dropdown.value = PlayerPrefs.GetInt(PrefName, 0);
     }
 }
-
