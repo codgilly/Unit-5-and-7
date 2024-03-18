@@ -12,12 +12,29 @@ public class Soundmanager : MonoBehaviour
     [SerializeField] Slider SFXSlider;
     private bool muted = false;
 
+    public static Soundmanager instance;
 
 
-    private void Awake()
+    void Awake()
     {
-        GameObject.DontDestroyOnLoad(this);
+        if (instance == null)
+        {
+            // if instance is null, store a reference to this instance
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            print("dont destroy");
+        }
+        else
+        {
+            // Another instance of this gameobject has been made so destroy it
+            // as we already have one
+            print("do destroy");
+            Destroy(gameObject);
+        }
     }
+
+
+
     // Start is called before the first frame update
     void Start()
     {
