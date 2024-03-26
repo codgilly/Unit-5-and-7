@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
@@ -8,8 +5,8 @@ using UnityEngine.Audio;
 public class Soundmanager : MonoBehaviour
 {
     [SerializeField] private AudioMixer myMixer;
-    [SerializeField] Slider volumeSlider;
-    [SerializeField] Slider SFXSlider;
+//    private Slider volumeSlider;
+//   [SerializeField] Slider SFXSlider;
     private bool muted = false;
 
     public static Soundmanager instance;
@@ -38,28 +35,29 @@ public class Soundmanager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        /*
         if (PlayerPrefs.HasKey("volumeSlider"))
         {
-            load();
+            Load();
         }
         else
         {
-            SetMusicVolume();
-            SetSFXVolume();
+
         }
+        */
     }
-    public void SetMusicVolume()
+    public void SetMusicVolume( float vol )
     {
-        float volume = volumeSlider.value;
-        myMixer.SetFloat("music", Mathf.Log10(volume) * 20);
-        PlayerPrefs.SetFloat("volumeSlider", volume);
+        myMixer.SetFloat("music", Mathf.Log10(vol) * 20);
+        PlayerPrefs.SetFloat("volumeSlider", vol);
+        print("change music vol to " + vol );
     }
 
-    public void SetSFXVolume()
+    public void SetSFXVolume(float val)
     {
-        float volume = SFXSlider.value;
-        myMixer.SetFloat("SFX", Mathf.Log10(volume) * 20);
-        PlayerPrefs.SetFloat("SFXSVolume", volume);
+        myMixer.SetFloat("SFX", Mathf.Log10(val) * 20);
+        PlayerPrefs.SetFloat("SFXSVolume", val);
+        print("change sfx vol " + val);
     }
 
     public void OnButtonPress()
@@ -76,19 +74,18 @@ public class Soundmanager : MonoBehaviour
             AudioListener.pause = false;
         }
 
-        save();
+        Save();
     }
 
 
     
-    private void load()
+    private void Load()
     {
-        volumeSlider.value = PlayerPrefs.GetFloat("volumeSlider");
-        SFXSlider.value = PlayerPrefs.GetFloat("SFXSVolume");
+
         muted = PlayerPrefs.GetInt("muted") == 1;
     }
 
-    private void save()
+    private void Save()
     {
 
         PlayerPrefs.SetInt("muted", muted ? 1 : 0);
